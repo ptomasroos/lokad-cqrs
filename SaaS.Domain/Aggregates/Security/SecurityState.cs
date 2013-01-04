@@ -44,6 +44,14 @@ namespace SaaS.Aggregates.Security
 
         readonly IDictionary<UserId, User> _globals = new Dictionary<UserId, User>();
 
+        public bool ContainsLogin(string login)
+        {
+            return _globals.Values
+                .Where(v => v.Kind == SecurityItemType.Password)
+                .Any(v => string.Equals(v.Lookup, login, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+
         public bool ContainsIdentity(string identity)
         {
             return _globals.Values

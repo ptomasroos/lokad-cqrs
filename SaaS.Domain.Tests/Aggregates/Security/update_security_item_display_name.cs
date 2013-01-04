@@ -12,7 +12,6 @@ namespace SaaS.Aggregates.Security
 {
     public sealed class update_security_item_display_name : security_syntax
     {
-
         public static readonly SecurityId id = new SecurityId(42);
         public static readonly UserId user = new UserId(15);
 

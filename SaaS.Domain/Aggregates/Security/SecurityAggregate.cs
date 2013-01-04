@@ -21,17 +21,16 @@ namespace SaaS.Aggregates.Security
             _state = state;
         }
 
-
         void Apply(IEvent<SecurityId> e)
         {
             _state.Mutate(e);
             Changes.Add(e);
         }
 
-        public void AddPassword(IDomainIdentityService ids, IUserIndexService index, PasswordGenerator pwds,
+        public void AddPassword(IDomainIdentityService ids, PasswordGenerator pwds,
             string display, string login, string password)
         {
-            if (index.IsLoginRegistered(login))
+            if (_state.ContainsLogin(login))
                 throw DomainError.Named("duplicate-login", "Login {0} is already taken", login);
 
             var user = new UserId(ids.GetId());
@@ -45,11 +44,11 @@ namespace SaaS.Aggregates.Security
         {
             if (_state.ContainsIdentity(identity))
                 return;
+
             var user = new UserId(ids.GetId());
             var token = pwds.CreateToken();
             Apply(new SecurityIdentityAdded(_state.Id, user, display, identity, token));
         }
-
 
         public void CreateSecurityAggregate(SecurityId securityId)
         {

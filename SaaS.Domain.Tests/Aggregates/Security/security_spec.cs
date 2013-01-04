@@ -25,7 +25,7 @@ namespace SaaS.Aggregates.Security
 
         protected override void ExecuteCommand(IEventStore store, ICommand<SecurityId> cmd)
         {
-            new SecurityApplicationService(store, Identity, Password, new TestUserIndexService<SecurityId>()).Execute(cmd);
+            new SecurityApplicationService(store, Identity, Password).Execute(cmd);
         }
     }
 }

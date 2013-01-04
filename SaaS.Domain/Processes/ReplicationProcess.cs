@@ -11,13 +11,13 @@ namespace SaaS.Processes
     /// Replicates changes between <see cref="ISecurityAggregate"/> and 
     /// individual instances of <see cref="IUserAggregate"/>
     /// </summary>
-    public sealed class ReplicationPort
+    public sealed class SecurityUserAggregateReplication
     {
         // 'Domain' is the name of the primary Bounded Context
         // in this system
         readonly DomainSender _send;
 
-        public ReplicationPort(DomainSender send)
+        public SecurityUserAggregateReplication(DomainSender send)
         {
             _send = send;
         }
@@ -32,40 +32,30 @@ namespace SaaS.Processes
             _send.ToUser(new CreateUser(e.UserId, e.Id));
         }
 
-
         public void When(SecurityItemRemoved e)
         {
             _send.ToUser(new DeleteUser(e.UserId));
         }
     }
 
-    public sealed class DomainSender
+    /// <summary>
+    /// Replicates changes between <see cref="IUserAggregate"/> and 
+    /// individual instances of <see cref="ISecurityAggregate"/>
+    /// </summary>
+    public sealed class UserAggregateSecurityReplication
     {
-        readonly ICommandSender _service;
+        // 'Domain' is the name of the primary Bounded Context
+        // in this system
+        readonly DomainSender _send;
 
-        public DomainSender(ICommandSender service)
+        public UserAggregateSecurityReplication(DomainSender send)
         {
-            _service = service;
+            _send = send;
         }
 
-        public void ToRegistration(ICommand<RegistrationId> cmd)
+        public void When(UserDeleted e)
         {
-            _service.SendCommand(cmd);
-        }
-
-        public void ToUser(ICommand<UserId> cmd)
-        {
-            _service.SendCommand(cmd);
-        }
-
-        public void ToSecurity(ICommand<SecurityId> cmd)
-        {
-            _service.SendCommand(cmd);
-        }
-
-        public void ToService(ICommand cmd)
-        {
-            _service.SendCommand(cmd);
+            _send.ToSecurity(new RemoveSecurityItem(e.SecurityId, e.Id));
         }
     }
 }

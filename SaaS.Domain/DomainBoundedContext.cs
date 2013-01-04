@@ -30,7 +30,6 @@ namespace SaaS
         public static IEnumerable<Func<CancellationToken, Task>> Tasks(ICommandSender service, IDocumentStore docs,
             bool isTest)
         {
-            var flow = new DomainSender(service);
             // more tasks go here
             yield break;
         }
@@ -39,7 +38,7 @@ namespace SaaS
         public static IEnumerable<object> Ports(ICommandSender service)
         {
             var flow = new DomainSender(service);
-            yield return new ReplicationPort(flow);
+            yield return new SecurityUserAggregateReplication(flow);
             yield return new RegistrationPort(flow);
             // more senders go here
         }
@@ -51,7 +50,7 @@ namespace SaaS
 
 
             yield return new UserApplicationService(store);
-            yield return new SecurityApplicationService(store, id, passwords, unique);
+            yield return new SecurityApplicationService(store, id, passwords);
             yield return new RegistrationApplicationService(store, id, unique, passwords);
             yield return id;
         }

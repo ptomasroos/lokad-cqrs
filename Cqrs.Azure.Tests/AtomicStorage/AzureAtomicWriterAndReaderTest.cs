@@ -24,7 +24,6 @@ namespace Cqrs.Azure.Tests.AtomicStorage
         AzureAtomicReader<Guid, TestView> _reader;
         CloudBlobClient _cloudBlobClient;
         string name;
-        private bool _container;
         private CloudBlobContainer _cloudBlobContainer;
 
         [SetUp]

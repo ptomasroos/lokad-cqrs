@@ -14,18 +14,15 @@ namespace SaaS.Aggregates.Security
         readonly IEventStore _eventStore;
         readonly IDomainIdentityService _ids;
         readonly PasswordGenerator _pwds;
-        readonly IUserIndexService _index;
 
         public SecurityApplicationService(
             IEventStore eventStore, 
             IDomainIdentityService ids, 
-            PasswordGenerator pwds,
-            IUserIndexService index)
+            PasswordGenerator pwds)
         {
             _eventStore = eventStore;
             _ids = ids;
             _pwds = pwds;
-            _index = index;
         }
 
         public void Execute(object o)
@@ -54,7 +51,7 @@ namespace SaaS.Aggregates.Security
 
         public void When(AddSecurityPassword c)
         {
-            Update(c, a => a.AddPassword(_ids, _index, _pwds, c.DisplayName, c.Login, c.Password));
+            Update(c, a => a.AddPassword(_ids, _pwds, c.DisplayName, c.Login, c.Password));
         }
 
         public void When(AddSecurityIdentity c)
