@@ -18,8 +18,6 @@ namespace Cqrs.Azure.Tests.AtomicStorage
     {
         IDocumentStore _store;
         string _name;
-        private CloudBlobContainer _container;
-        private CloudBlobContainer _sampleDocContainer;
 
         [SetUp]
         public void Setup()
@@ -29,19 +27,6 @@ namespace Cqrs.Azure.Tests.AtomicStorage
             var cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
             var documentStrategy = new DocumentStrategy(_name);
             _store = new AzureDocumentStore(documentStrategy, cloudBlobClient);
-
-            _container = cloudBlobClient.GetBlobDirectoryReference(_name).Container;
-            _container.CreateIfNotExist();
-
-            _sampleDocContainer = cloudBlobClient.GetBlobDirectoryReference(_name).Container;
-            _sampleDocContainer.CreateIfNotExist();
-        }
-
-        [TearDown]
-        public void Teardown()
-        {
-            _container.Delete();
-            _sampleDocContainer.Delete();
         }
 
         [Test]

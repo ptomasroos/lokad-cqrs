@@ -37,8 +37,6 @@ namespace Lokad.Cqrs.AtomicStorage
             get { return _strategy; }
         }
 
-        
-
         public void Reset(string bucket)
         {
             var blobs =  _client.GetBlobDirectoryReference(bucket).ListBlobs(new BlobRequestOptions { UseFlatBlobListing = true });
@@ -48,7 +46,6 @@ namespace Lokad.Cqrs.AtomicStorage
                 _client.GetBlobReference(listBlobItem.Uri.ToString()).DeleteIfExists();
             }
         }
-
        
         public IEnumerable<DocumentRecord> EnumerateContents(string bucket)
         {
@@ -85,6 +82,7 @@ namespace Lokad.Cqrs.AtomicStorage
         public void WriteContents(string bucket, IEnumerable<DocumentRecord> records)
         {
             var cloudBlobDirectory = _client.GetBlobDirectoryReference(bucket);
+            cloudBlobDirectory.Container.CreateIfNotExist();
             foreach (var atomicRecord in records)
             {
                 cloudBlobDirectory.GetBlobReference(atomicRecord.Key).UploadByteArray(atomicRecord.Read());
